@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The xarm_planner package</description>
 
-  <maintainer email="jason@ufactory.cc">jason</maintainer>
+  <maintainer email="jason@ufactory.cc">Jason Peng</maintainer>
 
   <license>BSD</license>
 
@@ -31,4 +31,6 @@
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>ros_controllers</exec_depend>
+  <exec_depend>ros_control</exec_depend>
 </package>

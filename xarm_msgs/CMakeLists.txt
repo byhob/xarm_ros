@@ -64,9 +64,16 @@ find_package(catkin REQUIRED COMPONENTS
    GetDigitalIO.srv
    GetAnalogIO.srv
    ClearErr.srv
+   GetErr.srv
    GripperConfig.srv
    GripperMove.srv
    GripperState.srv
+   SetLoad.srv
+   SetToolModbus.srv
+   ConfigToolModbus.srv
+   GetControllerDigitalIO.srv
+   SetControllerAnalogIO.srv
+   MoveAxisAngle.srv
  )
 
 ## Generate actions in the 'action' folder

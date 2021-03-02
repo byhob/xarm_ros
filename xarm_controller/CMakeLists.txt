@@ -8,6 +8,7 @@ add_compile_options(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  combined_robot_hw
   controller_manager
   joint_state_controller
   # robot_state_publisher
@@ -116,9 +117,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include 
-#  LIBRARIES xarm7_control
-  CATKIN_DEPENDS controller_manager joint_state_controller robot_state_publisher xarm_api
+  INCLUDE_DIRS include 
+  LIBRARIES xarm_hw
+  CATKIN_DEPENDS combined_robot_hw controller_manager joint_state_controller robot_state_publisher xarm_api
 #  DEPENDS system_lib
 )
 
@@ -134,9 +135,19 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/xarm7_control.cpp
-# )
+add_library(xarm_hw
+  src/xarm_hw.cpp
+)
+
+add_dependencies(xarm_hw ${catkin_EXPORTED_TARGETS})
+target_link_libraries(xarm_hw ${catkin_LIBRARIES})
+
+add_library(xarm_combined_hw
+  src/xarm_combined_hw.cpp
+)
+add_dependencies(xarm_combined_hw xarm_hw ${catkin_EXPORTED_TARGETS})
+target_link_libraries(xarm_combined_hw xarm_hw)
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -178,18 +189,18 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS xarm_hw xarm_combined_hw
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/
+  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -214,6 +225,8 @@ include_directories(
 add_executable(sample_motion src/sample_motion.cpp)
 target_link_libraries(sample_motion ${catkin_LIBRARIES})
 
-add_executable(xarm_traj_controller src/xarm_hardware_interface.cpp)
-target_link_libraries(xarm_traj_controller ${catkin_LIBRARIES})
+add_executable(xarm_traj_controller src/xarm_control_node.cpp)
+target_link_libraries(xarm_traj_controller xarm_hw ${catkin_LIBRARIES})
 
+add_executable(xarm_combined_traj_controller src/xarm_combined_control_node.cpp)
+target_link_libraries(xarm_combined_traj_controller xarm_combined_hw ${catkin_LIBRARIES})
